@@ -79,8 +79,16 @@ function PlotPCA()
 {
     var X_PC = document.getElementById('X_PC').value
     var Y_PC = document.getElementById('Y_PC').value
+    var Z_PC = document.getElementById('Z_PC').value
+    var plot_Z = $("#z_axis_checkbox").is(':checked');
+    var scatter_type = 'scatter';
 
-    JSON_to_send = { "pc": [Number(X_PC), Number(Y_PC)], "samples": selected_samples }
+    if(plot_Z)
+    {
+        scatter_type = 'scatter3d';
+    }
+
+    JSON_to_send = { "pc": [Number(X_PC), Number(Y_PC), 3], "samples": selected_samples }
     url = '/api/samples/batch'
     var xhr = new XMLHttpRequest();
     xhr.open("POST", url, true);
@@ -88,12 +96,65 @@ function PlotPCA()
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
             JSON_data = JSON.parse(xhr.responseText)
-            X_array = JSON_data["PC" + X_PC]
-            Y_array = JSON_data["PC" + Y_PC]
+            X_array = JSON_data["PC" + X_PC];
+            Y_array = JSON_data["PC" + Y_PC];
+            Z_array = JSON_data["PC" + Z_PC];
         }
         plotly_elem = document.getElementById("plotly_pca_plot");
-        var data = { x: X_array, y: Y_array, mode: 'markers+text', type: 'scatter', name: 'PCA Plot', text: selected_samples, textposition: 'top center', marker: { size: 12 } };
-        Plotly.newPlot(plotly_elem, [data]);
+        var data = { 
+            x: X_array, 
+            y: Y_array, 
+            z: Z_array, 
+            mode: 'markers+text', 
+            type: scatter_type, 
+            name: 'PCA Plot', 
+            text: selected_samples, 
+            textposition: 'top center', 
+            marker: { size: 12 } 
+        };
+
+        var layout = {
+            title: {
+              text:'PC' + X_PC + ' PC' + Y_PC + ' PC' + Z_PC,
+              font: {
+                family: 'sans-serif',
+                size: 24
+              },
+              xref: 'paper',
+              x: 0.05,
+            },
+            xaxis: {
+              title: {
+                text: 'PC' + X_PC,
+                font: {
+                  family: 'sans-serif',
+                  size: 18,
+                  color: '#7f7f7f'
+                }
+              },
+            },
+            yaxis: {
+              title: {
+                text: 'PC' + Y_PC,
+                font: {
+                  family: 'sans-serif',
+                  size: 18,
+                  color: '#7f7f7f'
+                }
+              }
+            },
+            zaxis: {
+                title: {
+                  text: 'PC' + Z_PC,
+                  font: {
+                    family: 'sans-serif',
+                    size: 18,
+                    color: '#7f7f7f'
+                  }
+                }
+              }
+        };
+        Plotly.newPlot(plotly_elem, [data], layout);
     }
     xhr.send(JSON.stringify(JSON_to_send))
 }
