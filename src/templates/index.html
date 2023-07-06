@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Home Page</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='styles/bootstrap.min.css')}}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <style>
+            @font-face 
+            {
+                font-family: PyAdamFont;
+                src: url({{ url_for('static', filename='resources/font.ttf')  }});
+            }
+            body
+            {
+                font-family: PyAdamFont;
+                padding-top: 5%;
+            }
+
+            .card
+            {
+                border-radius: 4px;
+                background: #fff;
+                box-shadow: 0 6px 10px rgba(0,0,0,.08), 0 0 6px rgba(0,0,0,.05);
+                transition: .3s transform cubic-bezier(.155,1.105,.295,1.12),.3s box-shadow,.3s -webkit-transform cubic-bezier(.155,1.105,.295,1.12);
+                padding: 14px 80px 18px 36px;
+                cursor: pointer;
+            }
+
+            .card:hover
+            {
+                transform: scale(1.05);
+                box-shadow: 0 10px 20px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.06);
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container mb-5">
+            <img style="float:left;" height="10%" width="10%"
+                src="{{ url_for('static', filename='resources/logo-square.png') }}">
+            <h1>AdmixturePy Index Page</h1>
+            <p style="float:left;">Running Version: <b id="version_string"></b>, on: <b id="platform_string"></b></p>
+        </div>
+        
+        <div class="container">
+            <div class="row">
+                <div class="col-6">
+                    <div class="card shadow p-3 mb-5 bg-white rounded">
+                        <img class="card-img-top" src="{{ url_for('static', filename='resources/pymonte-logo.png') }}" alt="PCA">
+                        <h4 class="card-title">PyMonte</h4>
+                        <p class="card-text" id="calculator_result_oninit">PyMonte calculator for Global25, do admixture and 
+                        distance analysis with a Python backend sped up by Numba.</p>
+                        <a href="/pymonte" class="stretched-link"></a>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="card shadow p-3 mb-5 bg-white rounded">
+                        <img class="card-img-top" src="{{ url_for('static', filename='resources/pca-logo.png') }}" alt="PCA">
+                        <h4 class="card-title">PCA</h4>
+                        <p class="card-text" id="calculator_result_oninit">PCA analysis of Global25 population averages, 
+                        powered by Plotly.js. Select sampls and choose the principal compoents to be plotted.</p>
+                        <a href="/pca" class="stretched-link"></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="{{ url_for('static', filename='js/lib/jquery.min.js')}}"></script>
+        <script src="{{ url_for('static', filename='js/lib/popper.min.js')}}"></script>
+        <script src="{{ url_for('static', filename='js/lib/bootstrap.min.js')}}"></script>
+        <script>
+            // Get version string
+            $.getJSON('/api/version', (data) => {
+                $("#version_string").html(data["version_major"] + "." + data["version_minor"]);
+                $("#platform_string").html(data["platform"]);
+            })
+        </script>
+    </body>
+</html>

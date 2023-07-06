@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block page_title %}
+PCA
+{% endblock %}
+
+{% block page_css %}
+<script src="https://cdn.plot.ly/plotly-2.24.1.min.js" charset="utf-8"></script>
+<style>
+    .page-content {
+        padding-top: 3%;
+        padding-bottom: 3%;
+        padding-left: 5%;
+        padding-right: 5%;
+    }
+</style>
+{% endblock %}
+
+{% block page_content %}
+<div class="alert alert-danger" id="error_message_alert" role="alert">
+</div>
+<div class="alert alert-warning" id="warning_message_alert" role="alert">
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-3">
+            <div class="col-12">
+                <div class="card shadow p-1 mb-5 bg-white rounded">
+                    <div class="card-body">
+                        <h5 class="card-title">Select Samples</h5>
+                        <ul class="list-group">
+                            <div id="selected_samples_list">
+                                <!-- SAMPLES GO HERE -->
+                            </div>
+                        </ul>
+                        <p style="padding-top:5%;"></p>
+                        <!--- BUTTON TO ADD SAMPLES -->
+                        <input list="g25_sample_list" id="input_sample_textbox" placeholder="Enter sample name..."
+                            size="20" onkeypress="OnSampleBoxEnter(event)">
+                        <button class="btn btn-sm btn-outline-success" onClick="AddSample()"><span
+                                class="fa fa-plus"></span></button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="card shadow p-1 mb-5 bg-white rounded">
+                    <div class="card-body">
+                        <ul class="list-group">
+                            <li class="list-group-item">
+                                <b>X-Axis</b>
+                                <div class="none" style="float:right;">
+                                    PC
+                                    <button class="btn btn-sm btn-danger"><span class="fa fa-minus"
+                                            onClick="DecrementInput('X_PC')"></span></button>
+                                    <input type="number" id="X_PC" name="X_PC" min="1" max="25" value="1">
+                                    <button class="btn btn-sm btn-success" onClick="IncrementInput('X_PC')"><span
+                                            class="fa fa-plus"></span></button>
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Y-Axis</b>
+                                <div class="none" style="float:right;">
+                                    PC
+                                    <button class="btn btn-sm btn-danger"><span class="fa fa-minus"
+                                            onClick="DecrementInput('X_PC')"></span></button>
+                                    <input type="number" id="Y_PC" name="Y_PC" min="1" max="25" value="2">
+                                    <button class="btn btn-sm btn-success" onClick="IncrementInput('Y_PC')"><span
+                                            class="fa fa-plus"></span></button>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <button class="btn btn-primary" onclick="PlotPCA()">Plot PCA</button>
+            </div>
+        </div>
+        <div class="col-9">
+            <div class="card shadow p-1 mb-5 bg-white rounded">
+                <div class="card-body">
+                <h5 class="card-title">Plot</h5>
+                    <div id="plotly_pca_plot" style="width:1200px;height:700px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<datalist id="g25_sample_list">
+</datalist>
+{% endblock %}
+
+{% block page_scripts %}
+<script>
+    // Hide the error message alert on load
+    $("#error_message_alert").hide();
+    $("#warning_message_alert").hide();
+    // Render an empty plot on load
+    $(document).ready( function () { data = {x: [], y: []}; Plotly.newPlot('plotly_pca_plot', data); });
+</script>
+
+<script src="{{ url_for('static', filename='js/helper.js') }}"></script>
+<script src="{{ url_for('static', filename='js/pca.js') }}"></script>
+<script src="{{ url_for('static', filename='js/oninit_pca.js') }}"></script>
+{% endblock %}

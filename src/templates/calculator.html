@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+
+{% block page_title %}
+PyAdam Calculator
+{% endblock %}
+
+
+{% block page_css %}
+<style>
+    .page-content {
+        font-family: PyAdamFont;
+        padding-left: 10%;
+        padding-right: 10%;
+        padding-top: 3%;
+        padding-bottom: 3%;
+        background-attachment: fixed;
+    }
+
+    table {
+        border-collapse: collapse;
+        margin: 25px 0;
+        font-size: 0.9em;
+        font-family: sans-serif;
+        min-width: 400px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    }
+
+    thead tr {
+        background-color: #009879;
+        color: #ffffff;
+        text-align: left;
+    }
+
+    th,
+    td {
+        padding: 12px 15px;
+    }
+
+    tbody tr:nth-of-type(even) {
+        background-color: #f3f3f3;
+    }
+
+    tbody tr:last-of-type {
+        border-bottom: 2px solid #009879;
+    }
+
+    button.truncate {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .btn-group-vertical > button
+    {
+        margin-bottom:10px;
+        border-radius:10px !important;  
+    }
+
+</style>
+{% endblock %}
+
+{% block page_content %}
+<div class="alert alert-danger" id="error_message_alert" role="alert">
+</div>
+<div class="alert alert-warning" id="warning_message_alert" role="alert">
+</div>
+<div class="container calculator-form">
+    <div class="row">
+        <div class="col-4">
+            <div class="col-12">
+                <div class="card shadow p-3 mb-5 bg-white rounded">
+                    <div class="card-body">
+                        <h5 class="card-title">Select Sources</h5>
+                        <ul class="list-group">
+                            <div id="sources_list">
+                                <!-- SOURCES GO HERE -->
+                            </div>
+                        </ul>
+                        <p style="padding-top:5%;"></p>
+                        <!--- Button to add sources -->
+                        <input list="g25_sample_list" id="input_source_textbox" placeholder="Enter sample name..." size="20" onkeypress="OnSourceBoxEnter(event)">
+                        <button class="btn btn-sm btn-outline-success" onClick="AddSource()"><span class="fa fa-plus"></span></button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="card shadow p-3 mb-5 bg-white rounded">
+                    <div class="card-body">
+                        <h5 class="card-title">Select Targets</h5>
+                        <ul class="list-group">
+                            <div id="target_list">
+                                <!-- TARGETS GO HERE -->
+                            </div>
+                        </ul>
+                        <p style="padding-top:5%;"></p>
+                        <!-- Button to add targets -->
+                        <input list="g25_sample_list" id="input_target_textbox" placeholder="Enter sample name..." size="20" onkeypress="OnTargetBoxEnter(event)">
+                        <button class="btn btn-sm btn-outline-success" onClick="AddTarget()"><span class="fa fa-plus"></span></button>
+                    </div>
+                </div>
+            </div>
+            <!--- LOAD AND SAVE MODEL BUTTONS --->
+            <div class="col-12 padding-bottom: 5%;">
+                <button class="btn btn-success" data-toggle="modal" data-target="#load_model_form"><b>Load Model</b></button>
+                <button class="btn btn-success" onClick="SaveModel()"><b>Save Model</b></button>
+                <button class="btn btn-danger" onClick="EmptyResult()"><b>Clear</b></button>
+            </div>
+        </div>
+
+        <div class="col-8">
+            <div class="card shadow p-3 mb-5 bg-white rounded">
+                <!--- TABS FOR THE CALCULATOR, DISTANCE --->
+                <div class="card-header">
+                    <ul class="nav nav-tabs card-header-tabs">
+                        <li class="nav-item"><a class="nav-link active" href="#tab_content_calculator" data-toggle="tab" id="tab_button_calculator">Calculator</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#tab_content_distance" data-toggle="tab" id="tab_button_distance">Distance</a></li>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <!--- TAB CONTENT BEGINS HERE --->
+                    <div class="tab-content">
+                        <div id="tab_content_calculator" class="tab-pane active">
+                            <h5 class="card-title">Calculator Result</h5>
+                            <p class="card-text" id="calculator_result_oninit"><i>Results will be shown here.</i></p>
+                            <div class="container" id="calculator_result">
+                                <!-- CALCULATOR RESULTS WILL APPEAR HERE --->
+                            </div>
+                            <button type="button" class="btn btn-primary" id="pymonte_button" onClick="PyMonte()"><b>Run PyMonte</b></button>
+                        </div>
+
+                        <div id="tab_content_distance" class="tab-pane">
+                            <h5 class="card-title">Distance Result</h5>
+                            <p class="card-text" id="distance_result_oninit"><i>Distance results will be shown here. Select a target.</i></p>
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-8" id="distance_result">
+                                        <!--- DISTANCE RESULTS WILL APPEAR HERE --->
+                                    </div>
+                                <div class="col-4">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="btn-group-vertical" id="distance_buttons">
+                                                <!-- DISTANCE BUTTONS ARE ADDED HERE -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--- MODEL LOAD MODAL -->
+    <div class="modal fade" id="load_model_form" tabindex="-1" role="dialog"
+        aria-labelledby="load_model_form_title" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="load_model_form_title">Load Model from JSON</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input id="input_model_file" type="file">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal"
+                        onClick="LoadModel()">Add</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--- LIST IS APPENDED TO BY CALCULATOR.JS AFTER RECEIVING JSON FROM SERVER --->
+<datalist id="g25_sample_list">
+</datalist>
+{% endblock %}
+
+{% block page_scripts %}
+<script>
+    // Hide the error message alert on load
+    $("#error_message_alert").hide();
+    $("#warning_message_alert").hide();
+
+</script>
+<script src="{{ url_for('static', filename='js/lib/xlsx.full.min.js')}}"></script>
+<script src="{{ url_for('static', filename='js/helper.js') }}"></script>
+<script src="{{ url_for('static', filename='js/calculator.js') }}"></script>
+<script src="{{ url_for('static', filename='js/distance.js') }}"></script>
+<script src="{{ url_for('static', filename='js/oninit_calculator.js') }}"></script>
+
+{% endblock %}
+
