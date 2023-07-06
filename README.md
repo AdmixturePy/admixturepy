@@ -7,7 +7,7 @@ A set of admixture tools written in Python with a JavaScript frontend.
 
 * Monte-Carlo Simulation in Python (sped up using numba) to estimate Global25 ancestry
 * Distance calculator
-* 2D PCA analysis
+* 2D/3D PCA analysis
 * Loading and saving models through JSON
 * Complete API access to the G25 database
 * Implemented in Flask
@@ -18,8 +18,13 @@ A set of admixture tools written in Python with a JavaScript frontend.
 
 * Custom samples
 * CUDA implementation of nMonte to speed up calculations
-* 3D PCA analysis
 
-| Index Page | Calculator UI | Distance | PCA UI |
-| ---------- | ------------- | -------- | ------ | 
-| ![](doc/img/scshot-index.png) | ![](doc/img/scshot-calculator.png) | ![](doc/img/scshot-distance.png) | ![](doc/img/scshot-pca.png) | 
+
+
+| Index | Distance | Calculator UI |
+| ----- | -------- | ------------- |
+| ![](doc/img/scshot-index.png) | ![](doc/img/scshot-distance.png) | ![](doc/img/scshot-calculator.png) | 
+
+| 2D PCA  | 3D PCA |
+| ------- | ------ | 
+| ![](doc/img/scshot-pca.png) | ![](doc/img/schot-pca3d.png) | 

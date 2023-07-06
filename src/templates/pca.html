@@ -8,10 +8,11 @@ PCA
 <script src="https://cdn.plot.ly/plotly-2.24.1.min.js" charset="utf-8"></script>
 <style>
     .page-content {
-        padding-top: 3%;
-        padding-bottom: 3%;
         padding-left: 5%;
         padding-right: 5%;
+        padding-top: 3%;
+        padding-bottom: 3%;
+        background-attachment: fixed;
     }
 </style>
 {% endblock %}
@@ -69,7 +70,23 @@ PCA
                                             class="fa fa-plus"></span></button>
                                 </div>
                             </li>
+
+                            <li class="list-group-item">
+                                <b>Z-Axis</b>
+                                <div class="none" style="float:right;">
+                                    PC
+                                    <button class="btn btn-sm btn-danger"><span class="fa fa-minus"
+                                            onClick="DecrementInput('Z_PC')"></span></button>
+                                    <input type="number" id="Z_PC" name="Z_PC" min="1" max="25" value="3">
+                                    <button class="btn btn-sm btn-success" onClick="IncrementInput('Z_PC')"><span
+                                            class="fa fa-plus"></span></button>
+                                </div>
+                            </li>
                         </ul>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="z_axis_checkbox">
+                            <label class="form-check-label" for="z_axis_checkbox">Enable Z-Axis</label>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -80,7 +97,7 @@ PCA
         <div class="col-9">
             <div class="card shadow p-1 mb-5 bg-white rounded">
                 <div class="card-body">
-                <h5 class="card-title">Plot</h5>
+                <h5 class="card-title">Output</h5>
                     <div id="plotly_pca_plot" style="width:1200px;height:700px;"></div>
                 </div>
             </div>
