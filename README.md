@@ -19,3 +19,7 @@ A set of admixture tools written in Python with a JavaScript frontend.
 * Custom samples
 * CUDA implementation of nMonte to speed up calculations
 * 3D PCA analysis
+
+| Index Page | Calculator UI | Distance | PCA UI |
+| ---------- | ------------- | -------- | ------ | 
+| ![](doc/img/scshot-index.png) | ![](doc/img/scshot-calculator.png) | ![](doc/img/scshot-distance.png) | ![](doc/img/scshot-pca.png) | 
