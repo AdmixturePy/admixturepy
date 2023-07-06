@@ -3,6 +3,7 @@
 
 A set of admixture tools written in Python with a JavaScript frontend.
 
+Try it out: <b><a href="http://admixturepy.pythonanywhere.com/">http://admixturepy.pythonanywhere.com/</a></b>
 ### Features
 
 * Monte-Carlo Simulation in Python (sped up using numba) to estimate Global25 ancestry
