@@ -1,17 +1,25 @@
 function AddSample()
 {
-    sample_to_add = document.getElementById("input_sample_textbox").value;
+	var custom_source = false;
+    var sample_to_add = document.getElementById("input_sample_textbox").value;
     if(sample_to_add == "")
     {
         DisplayWarningMessage("Warning: Empty sample name in input. Ignoring.");
         return;
     }
 
-    if(!g25_sample_list.includes(sample_to_add))
+	if(sample_to_add.startsWith('User > '))
     {
-        DisplayErrorMessage("Error: No such sample '" + sample_to_add + " exists in database!");
-        return;
+        custom_source = true;
     }
+	else
+	{
+		if(!g25_sample_list.includes(sample_to_add))
+		{
+			DisplayErrorMessage("Error: No such sample '" + sample_to_add + " exists in database!");
+			return;
+		}
+	}
 
     if(selected_samples.includes(sample_to_add))
     {
@@ -20,7 +28,12 @@ function AddSample()
     }
     // Limit text output to 20 characters (otherwise it can cause weird glitches)
     var element_text = sample_to_add
-    if(element_text.length > 20)
+	if(custom_source == true)
+	{
+		element_text = element_text.replace("User > ", "");
+	}
+
+    if(element_text.length > 25)
     {
         element_text = element_text.slice(0, 17)
         element_text += "..."
@@ -39,7 +52,12 @@ function AddSample()
     // This is to center the button
     content += '<div class="d-flex align-items-center justify-content-center">'
     // Add the icon from Font Awesome
-    content += '<span class="fa fa-sm fa-minus"></span></div></button></li></div>';
+    content += '<span class="fa fa-sm fa-minus"></span></div></button>';
+    if(custom_source == true)
+    {
+        content += '<span style="font-size:8px;position:absolute;bottom:0;left:1%;"><b>Custom</b></span>';
+    }
+    content += '</li></div>';
 
     $("#selected_samples_list").append(content);
     selected_samples.push(sample_to_add);
@@ -88,7 +106,13 @@ function PlotPCA()
         scatter_type = 'scatter3d';
     }
 
-    JSON_to_send = { "pc": [Number(X_PC), Number(Y_PC), 3], "samples": selected_samples }
+	// Remove 'User > '
+	selected_samples_cleaned = []
+	for(var i = 0; i < selected_samples.length; i++)
+	{
+		selected_samples_cleaned.push(selected_samples[i].replace("User > ", ""));
+	}
+    JSON_to_send = { "pc": [Number(X_PC), Number(Y_PC), Number(Z_PC)], "samples": selected_samples_cleaned, "custom_samples": custom_samples_list }
     url = '/api/samples/batch'
     var xhr = new XMLHttpRequest();
     xhr.open("POST", url, true);

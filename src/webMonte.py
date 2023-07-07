@@ -7,6 +7,16 @@ from collections import OrderedDict
 fit_gradient = gradient_generator.GradientGenerator(0, 10, (110, 230, 150), (250, 130, 150))
 admixture_gradient = gradient_generator.GradientGenerator(0, 1, (255, 255, 255), (10, 200, 100))
 distance_gradient = gradient_generator.GradientGenerator(0.02, 0.20, (250, 200, 60), (0, 50, 250))
+
+def handleCustomSamples(JSON_data):
+    custom_samples = {}
+    if "custom_samples" in JSON_data:
+        for samp_str in JSON_data["custom_samples"]:
+            sample = global25.G25_Sample(samp_str)
+            custom_samples[sample.name] = sample
+    
+    return custom_samples
+
 def returnAllSamples():
     return { "samples": list(global25.samples.keys()) }
 
@@ -30,14 +40,29 @@ def returnDistance(JSON_data):
     try:
         source_strings = JSON_data["sources"]
         target = JSON_data["target"]
+        custom_samples = handleCustomSamples(JSON_data)
+
         table_output = False
 
         if("table" in JSON_data):
             table_output = JSON_data["table"]
         
+        target_sample = None
+
+        if target in custom_samples:
+            target_sample = custom_samples[target]
+        else:
+            target_sample = global25.GetSample(target)
+
         results = {}
         for source in source_strings:
-            results[source] = nMonte.DistanceTwoElements(global25.GetSample(source), global25.GetSample(target))
+            source_sample = None
+            if source in custom_samples:
+                source_sample = custom_samples[source]
+            else:
+                source_sample = global25.GetSample(source)
+            
+            results[source] = nMonte.DistanceTwoElements(source_sample, target_sample)
 
         sorted_result_list = sorted(results.items(), key=lambda x: x[1])
         import sys
@@ -68,6 +93,9 @@ def webMonte(JSON_data):
         target_strings = JSON_data["targets"]
         table_output = False
         table_id = ""
+        custom_samples = {}
+        g25_sources = []
+        g25_targets = []
 
         # Check if HTML table output is desired.
         if "table" in JSON_data:
@@ -77,15 +105,21 @@ def webMonte(JSON_data):
         if "table_id" in JSON_data:
             table_id = JSON_data["table_id"]
         
-        g25_sources = []
-        g25_targets = []
+        # Are we provided with custom samples?
+        custom_samples = handleCustomSamples(JSON_data)
 
         # Add them to sources
         for source in source_strings:
-            g25_sources.append(global25.GetSample(source))
+            if(source in custom_samples):
+                g25_sources.append(custom_samples[source])
+            else:
+                g25_sources.append(global25.GetSample(source))
         
         for target in target_strings:
-            g25_targets.append(global25.GetSample(target))
+            if(target in custom_samples):
+                g25_sources.append(custom_samples[target])
+            else:
+                g25_targets.append(global25.GetSample(target))
         
         if not table_output:
             full_result = { "results": {} }
@@ -135,12 +169,18 @@ def returnSamplesPCBatch(JSON_data):
         PCs_to_retrieve = JSON_data["pc"]
         sample_strings = JSON_data["samples"]
 
+        custom_samples = handleCustomSamples(JSON_data)
+
         result = {}
         for i in PCs_to_retrieve:
             result["PC" + str(i)] = []
 
         for sample in sample_strings:
-            pc_list = global25.GetSample(sample).g25
+            pc_list = None
+            if(sample in custom_samples):
+                pc_list = custom_samples[sample].g25
+            else:
+                pc_list = global25.GetSample(sample).g25
             for i in range(0, len(pc_list)):
                 if(i in PCs_to_retrieve):
                     result["PC" + str(i)].append(pc_list[i])

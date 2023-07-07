@@ -1,5 +1,6 @@
 function AddToInternalList(input_source, html_list_element, actual_list, removal_func, direct_add=false)
 {
+    var custom_source = false;
     // direct_add will directly use input_source while not having it means the function will query the element
     // selector and the input_source is an actual HTML element to be queryed.
     // This is to ensure the same function is used by both the UI and the JSON loader under "LoadModel()".
@@ -12,11 +13,20 @@ function AddToInternalList(input_source, html_list_element, actual_list, removal
         source_to_add = document.getElementById(input_source).value;
         document.getElementById(input_source).value = "";
     }
-    // Check if sample exists
-    if(!g25_sample_list.includes(source_to_add))
+
+    // Check if sample is custom
+    if(source_to_add.startsWith('User > '))
     {
-        DisplayErrorMessage('Error: No such sample "' + source_to_add + '" in list of available samples!');
-        return;
+        custom_source = true;
+    }
+    else
+    {
+        // Check if sample exists
+        if(!g25_sample_list.includes(source_to_add))
+        {
+            DisplayErrorMessage('Error: No such sample "' + source_to_add + '" in list of available samples!');
+            return;
+        }
     }
 
     if(source_to_add == "")
@@ -30,13 +40,13 @@ function AddToInternalList(input_source, html_list_element, actual_list, removal
         DisplayWarningMessage('Warning: It is already added to the required list. Not adding.');
         return;
     }
-    // If it's a target add to distance calculator
-    if(actual_list == g25_targets)
-    {
-        AddDistanceButton(source_to_add);
-    }
     // Limit text output to 20 characters (otherwise it can cause weird glitches)
     var element_text = source_to_add
+    if(custom_source == true)
+    {
+        element_text = element_text.replace('User > ', '');
+    }
+    
     if(element_text.length > 20)
     {
         element_text = element_text.slice(0, 17)
@@ -55,10 +65,20 @@ function AddToInternalList(input_source, html_list_element, actual_list, removal
     // This is to center the button
     content += '<div class="d-flex align-items-center justify-content-center">'
     // Add the icon from Font Awesome
-    content += '<span class="fa fa-sm fa-minus"></span></div></button></li></div>';
+    content += '<span class="fa fa-sm fa-minus"></span></div></button>';
+    if(custom_source == true)
+    {
+        content += '<span style="font-size:8px;position:absolute;bottom:0;left:1%;"><b>Custom</b></span>';
+    }
+    content += '</li></div>';
 
     $(html_list_element).append(content);
     actual_list.push(source_to_add);
+    // If it's a target add to distance calculator
+    if(actual_list == g25_targets)
+    {
+        AddDistanceButton(source_to_add);
+    }
 }
 
 // Add the distance button when an element is added to the target list
@@ -177,7 +197,24 @@ function PyMonte()
     // Disable the button
     $('#pymonte_button').prop('disabled', true);
     // Request output in form of a table.
-    var data = JSON.stringify({"sources": g25_sources, "targets": g25_targets, "table": true , "table_id": table_id});
+
+    // Remove prefix 'User >' from the samples before sending
+    g25_sources_cleaned = []
+    g25_targets_cleaned = []
+
+    for(var i = 0; i < g25_sources.length; i++)
+    {
+        var src = g25_sources[i];
+        g25_sources_cleaned.push(src.replace("User > ", ""));
+    }
+
+    for(var i = 0; i < g25_targets.length; i++)
+    {
+        var tgt = g25_targets[i];
+        g25_targets_cleaned.push(tgt.replace("User > ", ""));
+    }
+
+    var data = JSON.stringify({"sources": g25_sources_cleaned, "targets": g25_targets_cleaned, "table": true , "table_id": table_id, "custom_samples": custom_samples_list});
     xhr.send(data);
 }
 
@@ -224,7 +261,7 @@ function LoadModelFromJSONString(JSON_string)
     }
 }
 // Loads a model from JSON into the view.
-function LoadModel()
+function LoadModelFromFile()
 {
     if(document.getElementById("input_model_file").value == "") 
     {
@@ -240,4 +277,3 @@ function LoadModel()
     }
     file_reader.readAsText(file_handle);
 }
-

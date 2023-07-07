@@ -97,8 +97,12 @@ PyAdam Calculator
                     </div>
                 </div>
             </div>
+            <!--- ADD CUSTOM SAMPLES BOX --->
+            <div class="col-12" style="padding-bottom:10%">
+                <button class="btn btn-sm btn-outline-success" data-toggle="modal" data-target="#custom_samples_form"><span class="fa fa-plus"></span> <b>Custom Samples...</b></button>
+            </div>
             <!--- LOAD AND SAVE MODEL BUTTONS --->
-            <div class="col-12 padding-bottom: 5%;">
+            <div class="col-12 text-center">
                 <button class="btn btn-success" data-toggle="modal" data-target="#load_model_form"><b>Load Model</b></button>
                 <button class="btn btn-success" onClick="SaveModel()"><b>Save Model</b></button>
                 <button class="btn btn-danger" onClick="EmptyResult()"><b>Clear</b></button>
@@ -167,12 +171,35 @@ PyAdam Calculator
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-dismiss="modal"
-                        onClick="LoadModel()">Add</button>
+                        onClick="LoadModelFromFile()">Load Model</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="custom_samples_form" tabindex="-1" role="dialog"
+        aria-labelledby="custom_samples_form_title" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="custom_samples_form_title">Custom Samples</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <textarea style="width: 99%;" name="custom_samples" id="custom_samples_input" rows="10" placeholder="Paste Global25 CSV data here..."></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal"
+                        onClick="LoadCustomSamples()">Load Samples into Calculator</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <!--- LIST IS APPENDED TO BY CALCULATOR.JS AFTER RECEIVING JSON FROM SERVER --->

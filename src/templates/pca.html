@@ -90,16 +90,42 @@ PCA
                     </div>
                 </div>
             </div>
+            <div class="col-12" style="padding-bottom:10%">
+                <button class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#custom_samples_form"><span class="fa fa-plus"></span> Custom Samples</button>
+            </div>
             <div class="col-12">
-                <button class="btn btn-primary" onclick="PlotPCA()">Plot PCA</button>
+                <button class="btn btn-primary" onClick="PlotPCA()">Plot PCA</button>
             </div>
         </div>
         <div class="col-9">
             <div class="card shadow p-1 mb-5 bg-white rounded">
                 <div class="card-body">
-                <h5 class="card-title">Output</h5>
+                    <h5 class="card-title">Output</h5>
                     <div id="plotly_pca_plot" style="width:1200px;height:700px;"></div>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="custom_samples_form" tabindex="-1" role="dialog" aria-labelledby="custom_samples_form_title"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="custom_samples_form_title">Custom Samples</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <textarea style="width: 99%;" name="custom_samples" id="custom_samples_input" rows="10"
+                    placeholder="Paste Global25 CSV data here..."></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" onClick="LoadCustomSamples()">Load
+                    Samples</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -115,7 +141,7 @@ PCA
     $("#error_message_alert").hide();
     $("#warning_message_alert").hide();
     // Render an empty plot on load
-    $(document).ready( function () { data = {x: [], y: []}; Plotly.newPlot('plotly_pca_plot', data); });
+    $(document).ready(function () { data = { x: [], y: [] }; Plotly.newPlot('plotly_pca_plot', data); });
 </script>
 
 <script src="{{ url_for('static', filename='js/helper.js') }}"></script>

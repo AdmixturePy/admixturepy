@@ -9,6 +9,7 @@ Try it out: <b><a href="http://admixturepy.pythonanywhere.com/">http://admixture
 * Monte-Carlo Simulation in Python (sped up using numba) to estimate Global25 ancestry
 * Distance calculator
 * 2D/3D PCA analysis
+* Custom samples
 * Loading and saving models through JSON
 * Complete API access to the G25 database
 * Implemented in Flask
@@ -17,7 +18,6 @@ Try it out: <b><a href="http://admixturepy.pythonanywhere.com/">http://admixture
 
 ### Yet to be implemented
 
-* Custom samples
 * CUDA implementation of nMonte to speed up calculations
 
 

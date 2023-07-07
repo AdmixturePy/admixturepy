@@ -27,6 +27,18 @@ function GetDistance(target)
         }
     }
 
-    var data = JSON.stringify({ "target": target, "sources": g25_sources, "table": true });
+    // Remove prefix 'User >' from the samples before sending
+    g25_sources_cleaned = []
+    for(var i = 0; i < g25_sources.length; i++)
+    {
+        var src = g25_sources[i];
+        g25_sources_cleaned.push(src.replace("User > ", ""));
+    }
+    if(target.startsWith('User > '))
+    {
+        target = target.replace('User > ', '');
+    }
+
+    var data = JSON.stringify({ "target": target, "sources": g25_sources_cleaned, "table": true, "custom_samples": custom_samples_list });
     xhr.send(data);
 }
